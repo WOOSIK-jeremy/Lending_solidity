@@ -102,7 +102,7 @@ contract UpsideAcademyLending{
         uint256 debtTokenValue = tokenAmount * oracle.getPrice(token);
         uint256 totalDebtValue = tokenAccount[user] * oracle.getPrice(token);
 
-        require(collateralValue * 75 / 100 < debtValue, "Not liquidatable"); // LT = 75% 
+        require(collateralEthValue * 75 / 100 < totalDebtValue, "Not liquidatable"); // LT = 75% 
         // require((collateralEthValue * 3) / 4 < totalDebtValue, "Collateral value is sufficient.");
 
         require(debtTokenValue <= (totalDebtValue / 4), "Liquidation amount is too high.");
