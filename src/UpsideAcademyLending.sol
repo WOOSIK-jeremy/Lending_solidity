@@ -98,17 +98,16 @@ contract UpsideAcademyLending{
     function liquidate(address user, address token, uint256 tokenAmount) public {
         require(tokenAccount[user] > 0, "User must have a loan.");
 
-        uint256 collateralEthValue = accounts[user] * oracle.getPrice(address(0x0));
+        uint256 collateralEthValue = firstAccount[user] * oracle.getPrice(address(0x0));
         uint256 debtTokenValue = tokenAmount * oracle.getPrice(token);
         uint256 totalDebtValue = tokenAccount[user] * oracle.getPrice(token);
 
         require(collateralEthValue * 75 / 100 < totalDebtValue, "Not liquidatable"); // LT = 75% 
-        // require((collateralEthValue * 3) / 4 < totalDebtValue, "Collateral value is sufficient.");
-
         require(debtTokenValue <= (totalDebtValue / 4), "Liquidation amount is too high.");
 
         tokenAccount[user] -= tokenAmount;
         accounts[user] -= debtTokenValue / oracle.getPrice(address(0x0));
+        firstAccount[user] -= debtTokenValue / oracle.getPrice(address(0x0));
 
         require(IERC20(token).transferFrom(msg.sender, address(this), tokenAmount), "Liquidation transfer failed");
     }
